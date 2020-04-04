@@ -644,10 +644,11 @@ object ConsumerGroupCommand extends Logging {
       Admin.create(props)
     }
 
-    // todo mike: can we get 30k from admin client somehow? its in the default of optset
     private def withTimeoutMs [T <: AbstractOptions[T]] (options : T) =  {
-      val t = if (opts.options.has(opts.timeoutMsOpt)) opts.options.valueOf(opts.timeoutMsOpt).intValue() else 30000
-      options.timeoutMs(t)
+      if (opts.options.has(opts.timeoutMsOpt)){
+        options.timeoutMs(opts.options.valueOf(opts.timeoutMsOpt).intValue())
+      }
+      options
     }
 
     private def parseTopicPartitionsToReset(groupId: String, topicArgs: Seq[String]): Seq[TopicPartition] = topicArgs.flatMap {
