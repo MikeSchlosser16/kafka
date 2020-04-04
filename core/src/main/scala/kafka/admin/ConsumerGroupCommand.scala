@@ -167,6 +167,7 @@ object ConsumerGroupCommand extends Logging {
                              private[admin] val configOverrides: Map[String, String] = Map.empty) {
 
     private val adminClient = createAdminClient(configOverrides)
+
     // We have to make sure it is evaluated once and available
     private lazy val resetPlanFromFile: Option[Map[String, Map[TopicPartition, OffsetAndMetadata]]] = {
       if (opts.options.has(opts.resetFromFileOpt)) {
