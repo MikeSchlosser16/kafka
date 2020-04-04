@@ -163,11 +163,11 @@ object ConsumerGroupCommand extends Logging {
     }
   }
 
+  //todo: mike
   class ConsumerGroupService(val opts: ConsumerGroupCommandOptions,
                              private[admin] val configOverrides: Map[String, String] = Map.empty) {
 
     private val adminClient = createAdminClient(configOverrides)
-
     // We have to make sure it is evaluated once and available
     private lazy val resetPlanFromFile: Option[Map[String, Map[TopicPartition, OffsetAndMetadata]]] = {
       if (opts.options.has(opts.resetFromFileOpt)) {
@@ -640,12 +640,15 @@ object ConsumerGroupCommand extends Logging {
     private def createAdminClient(configOverrides: Map[String, String]): Admin = {
       val props = if (opts.options.has(opts.commandConfigOpt)) Utils.loadProps(opts.options.valueOf(opts.commandConfigOpt)) else new Properties()
       props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, opts.options.valueOf(opts.bootstrapServerOpt))
-      configOverrides.foreach { case (k, v) => props.put(k, v)}
+      configOverrides.foreach { case (k, v) =>
+        print("override:", k, v)
+        props.put(k, v)}
       Admin.create(props)
     }
 
+    // todo mike: if remove default this is always 0. we should use admin client?
     private def withTimeoutMs [T <: AbstractOptions[T]] (options : T) =  {
-      val t = opts.options.valueOf(opts.timeoutMsOpt).intValue()
+      val t = if (opts.options.has(opts.timeoutMsOpt)) opts.options.valueOf(opts.timeoutMsOpt).intValue() else 30000
       options.timeoutMs(t)
     }
 
@@ -964,7 +967,7 @@ object ConsumerGroupCommand extends Logging {
                              .withRequiredArg
                              .describedAs("timeout (ms)")
                              .ofType(classOf[Long])
-                             .defaultsTo(5000)
+//                             .defaultsTo(5000)
     val commandConfigOpt = parser.accepts("command-config", CommandConfigDoc)
                                   .withRequiredArg
                                   .describedAs("command config property file")

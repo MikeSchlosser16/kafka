@@ -21,6 +21,7 @@ import java.time.Duration
 import java.util.concurrent.{ExecutorService, Executors, TimeUnit}
 import java.util.{Collections, Properties}
 
+import joptsimple.OptionSet
 import kafka.admin.ConsumerGroupCommand.{ConsumerGroupCommandOptions, ConsumerGroupService}
 import kafka.integration.KafkaServerTestHarness
 import kafka.server.KafkaConfig
@@ -84,7 +85,12 @@ class ConsumerGroupCommandTest extends KafkaServerTestHarness {
   }
 
   def getConsumerGroupService(args: Array[String]): ConsumerGroupService = {
+    println("inside getConsumerGroupService")
     val opts = new ConsumerGroupCommandOptions(args)
+    println("inside getConsumerGroupService, opts: ", opts)
+    println("inside getConsumerGroupService, opts.timeout: ", opts.timeoutMsOpt)
+    println("val: ", opts.options.valueOf(opts.timeoutMsOpt))
+
     val service = new ConsumerGroupService(opts, Map(AdminClientConfig.RETRIES_CONFIG -> Int.MaxValue.toString))
     consumerGroupService = service :: consumerGroupService
     service

@@ -1039,8 +1039,12 @@ public class KafkaAdminClient extends AdminClient {
                     continue;
                 }
                 Call call = calls.remove(0);
+                System.out.println("call dlms: " + call.deadlineMs);
+                System.out.println("call dlms - now: "+ (call.deadlineMs - now));
+                System.out.println("kac is: " + KafkaAdminClient.this.requestTimeoutMs);
                 int requestTimeoutMs = Math.min(KafkaAdminClient.this.requestTimeoutMs,
                         calcTimeoutMsRemainingAsInt(now, call.deadlineMs));
+                System.out.println("requestTimeoutMs is: " + requestTimeoutMs);
                 AbstractRequest.Builder<?> requestBuilder;
                 try {
                     requestBuilder = call.createRequest(requestTimeoutMs);
